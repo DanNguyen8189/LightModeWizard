@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks'
 import preactLogo from './assets/preact.svg'
 import viteLogo from '/vite.svg'
 import VideoConverter from './videoconverter'
+import Transcode from './transcode'
 import './app.css';
 
 export function App() {
@@ -19,14 +20,15 @@ export function App() {
       </div> */}
       <h1>Light Mode Wizard</h1>
       <div class="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+        {/* <button onClick={() => setCount((count) => count + 1)}>
           oops count is {count}
-        </button>
+        </button> */}
         <p>
           Give me your dark mode videos and I'll give them light
         </p>
       </div>
       <VideoConverter />
+      <Transcode />
     </div>
   )
 }

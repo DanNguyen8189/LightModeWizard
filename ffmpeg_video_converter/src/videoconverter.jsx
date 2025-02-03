@@ -31,9 +31,6 @@ export default function videoConvertor() {
             }
             }
         />
-        <button onClick={() => setLoaded(true)}>
-          setLoaded test
-        </button>
 
 
         {!loaded ? (
