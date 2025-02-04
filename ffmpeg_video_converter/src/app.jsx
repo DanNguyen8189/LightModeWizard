@@ -28,7 +28,7 @@ export function App() {
         </p>
       </div>
       <VideoConverter />
-      <Transcode />
+      {/* <Transcode /> */}
     </div>
   )
 }
