@@ -12,12 +12,13 @@ export default function videoConvertor() {
     const transcode = async () => {
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.writeFile('input.mp4', await fetchFile(video));
+        //await ffmpeg.writeFile('input.webm', await fetchFile('https://raw.githubusercontent.com/ffmpegwasm/testdata/master/Big_Buck_Bunny_180_10s.webm'));
         //await ffmpeg.exec(['-i', 'input.webm', 'output.mp4']);
-        await ffmpeg.exec(['-i', 'imput.mp4', 'output.mp4'])
-        //await ffmpeg.exec(['-i', 'imput.mp4', '-vf', '"negate,hue=h=180,eq=contrast=1.2:saturation=1.1"', 'output.mp4'])
+        await ffmpeg.exec(['-i', 'input.mp4', 'output.mp4'])
+        //await ffmpeg.exec(['-i', 'input.mp4', '-vf', '"negate,hue=h=180,eq=contrast=1.2:saturation=1.1"', 'output.mp4'])
         const data = await ffmpeg.readFile('output.mp4');
-        // videoRef.current.src =
-        //     URL.createObjectURL(new Blob([data.buffer], {type: 'video/mp4'}));
+
+        setVideo(URL.createObjectURL(new Blob([data.buffer], {type: 'video/mp4'})));
     }
 
     return <div>
@@ -30,6 +31,10 @@ export default function videoConvertor() {
                 if (file){
                     const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
                     const ffmpeg = ffmpegRef.current;
+                    ffmpeg.on('log', ({ message }) => {
+                        messageRef.current.innerHTML = message;
+                        console.log(message);
+                    });
                     const videoURL = URL.createObjectURL(file);
                     //videoRef.current.src = videoURL;
                     //messageRef.current.textContent = "loading video"
@@ -59,7 +64,7 @@ export default function videoConvertor() {
                 style = {{ "max-width":"80%"}}  
                 src = {video}
             />
-            <p>Video loaded</p>
+            <p ref={messageRef}></p>
             <button onClick={transcode}>Convert to Light Mode</button>
             </div>
         ) : (

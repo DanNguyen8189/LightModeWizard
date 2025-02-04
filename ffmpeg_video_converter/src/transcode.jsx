@@ -28,7 +28,9 @@ export default function transcode() {
     const transcode = async () => {
         const ffmpeg = ffmpegRef.current;
         await ffmpeg.writeFile('input.webm', await fetchFile('https://raw.githubusercontent.com/ffmpegwasm/testdata/master/Big_Buck_Bunny_180_10s.webm'));
+        //await ffmpeg.writeFile('input.mp4', await fetchFile('https://raw.githubusercontent.com/DanNguyen8189/ffmpeg/main/Recording.mp4'));
         await ffmpeg.exec(['-i', 'input.webm', 'output.mp4']);
+        //await ffmpeg.exec(['-i', 'input.mp4', 'output.mp4']);
         const data = await ffmpeg.readFile('output.mp4');
         videoRef.current.src =
             URL.createObjectURL(new Blob([data.buffer], {type: 'video/mp4'}));
