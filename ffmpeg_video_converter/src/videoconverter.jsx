@@ -14,8 +14,8 @@ export default function videoConvertor() {
         await ffmpeg.writeFile('input.mp4', await fetchFile(video));
         //await ffmpeg.writeFile('input.webm', await fetchFile('https://raw.githubusercontent.com/ffmpegwasm/testdata/master/Big_Buck_Bunny_180_10s.webm'));
         //await ffmpeg.exec(['-i', 'input.webm', 'output.mp4']);
-        await ffmpeg.exec(['-i', 'input.mp4', 'output.mp4'])
-        //await ffmpeg.exec(['-i', 'input.mp4', '-vf', '"negate,hue=h=180,eq=contrast=1.2:saturation=1.1"', 'output.mp4'])
+        //await ffmpeg.exec(['-i', 'input.mp4', 'output.mp4'])
+        await ffmpeg.exec(['-i', 'input.mp4', '-vf', 'negate,hue=h=180,eq=contrast=1.2:saturation=1.1', 'output.mp4'])
         const data = await ffmpeg.readFile('output.mp4');
 
         setVideo(URL.createObjectURL(new Blob([data.buffer], {type: 'video/mp4'})));
