@@ -3,9 +3,9 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 
 export default function videoConvertor() {
-    const [loading, setLoading] = useState(false);
     const [video, setVideo] = useState(null);
     const [converted, setConverted] = useState(false)
+    const [converting, setConverting] = useState(false)
     const ffmpegRef = useRef(new FFmpeg());
     //const videoRef = useRef(null);
     const messageRef = useRef(null);
@@ -23,6 +23,7 @@ export default function videoConvertor() {
 
     const transcode = async () => {
         const ffmpeg = ffmpegRef.current;
+        setConverting(true);
         try {
             await ffmpeg.writeFile('input.mp4', await fetchFile(video));
             //await ffmpeg.writeFile('input.webm', await fetchFile('https://raw.githubusercontent.com/ffmpegwasm/testdata/master/Big_Buck_Bunny_180_10s.webm'));
@@ -38,15 +39,17 @@ export default function videoConvertor() {
 
         //setVideo(URL.createObjectURL(new Blob([data.buffer], {type: 'video/mp4'})));
         setConverted(true);
+        setConverting(false);
     }
 
     const download = async () => {
+        // https://stackoverflow.com/questions/50694881/how-to-download-file-in-react-js
         console.log("download placeholder")
         const link = document.createElement('a');
         link.href = video
         link.setAttribute(
             'download',
-            `FileName.mp4`,
+            `ConvertedFileName.mp4`,
           );
         // Append to html link element page
         document.body.appendChild(link);
@@ -59,36 +62,36 @@ export default function videoConvertor() {
     }
 
     function Video(){
-        if (loading){
-            return <p>"Loading..."</p>
+        if (video){
+            return (<div>
+                        <video
+                            //ref={videoRef}  
+                            controls
+                            // style = {{ display : loading ? "block" : "none"}}  
+                            //style = "max-width:80%"
+                            style = {{ "max-width":"80%"}}  
+                            src = {video}
+                        />
+                        <p ref={messageRef}></p>
+                        {/* <button onClick={convert}>Convert to Light Mode</button> */}
+                    </div>
+            )
         }
         else {
-            if (video){
-                return (<div>
-                            <video
-                                //ref={videoRef}  
-                                controls
-                                // style = {{ display : loading ? "block" : "none"}}  
-                                //style = "max-width:80%"
-                                style = {{ "max-width":"80%"}}  
-                                src = {video}
-                            />
-                            <p ref={messageRef}></p>
-                            {/* <button onClick={convert}>Convert to Light Mode</button> */}
-                        </div>
-                )
-            }
-            else {
-                return <p>Select a video to load</p>
-            }
+            return <p>Select a video to load</p>
         }
+        
     }
 
     function Button(){
-        if (converted && video){
-            return <button onClick={download}>Download</button>
-        } else if (video) {
-            return <button onClick={convert}>Convert to Light Mode</button>
+        if (!converting){
+            if (video){
+                if (converted){
+                    return <button onClick={download}>Download</button>
+                } else {
+                    return <button onClick={convert}>Convert to Light Mode</button>
+                }
+            }
         }
     }
 
@@ -98,7 +101,6 @@ export default function videoConvertor() {
             accept="video/mp4"
             onChange={async (e) => {
                 const file = e.target.files[0];
-                setLoading(true);
                 setConverted(false);
                 if (file){
                     const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
@@ -115,7 +117,6 @@ export default function videoConvertor() {
                         wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
                     });
                     setVideo(videoURL);
-                    setLoading(false);
                     //messageRef.current.textContent = "loaded"
                 }
             }
